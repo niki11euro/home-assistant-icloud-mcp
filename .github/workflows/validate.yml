@@ -24,12 +24,14 @@ jobs:
                   yaml.safe_load(handle)
               print('OK', path)
           PY
-      - name: Check shell syntax
+      - name: Check shell and Python syntax
         run: |
           for f in */run.sh; do
             sh -n "$f"
             echo "OK $f"
           done
+          python -m py_compile icloud_reminders_mcp/auth_mcp_proxy.py
+          echo "OK icloud_reminders_mcp/auth_mcp_proxy.py"
       - name: Build Core iCloud App image
         run: docker build --pull -t ha-icloud-core-test ./icloud_mcp
       - name: Build Reminders App image
