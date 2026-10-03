@@ -1,0 +1,19 @@
+configuration:
+  apple_id:
+    name: Apple Account email
+    description: Email address used for iCloud CalDAV authentication.
+  app_specific_password:
+    name: App-specific password
+    description: Apple app-specific password. Never use the main Apple Account password.
+  allow_delete:
+    name: Allow deletion
+    description: Expose the destructive delete_reminder tool. Upstream confirmation is still required per call.
+  list_allowlist:
+    name: Reminder list allowlist
+    description: Optional comma-separated display names. Empty allows every VTODO-capable list.
+  request_timeout:
+    name: iCloud request timeout
+    description: Timeout in seconds for CalDAV requests.
+  mcp_auth_token:
+    name: Local MCP bearer token
+    description: Random token used only between the tunnel and this internal MCP endpoint.

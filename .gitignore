@@ -1,0 +1,10 @@
+# Local development
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+__pycache__/
+.pytest_cache/
+.venv/
+node_modules/

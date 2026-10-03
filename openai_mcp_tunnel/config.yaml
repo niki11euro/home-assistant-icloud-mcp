@@ -1,0 +1,20 @@
+name: "OpenAI Secure MCP Tunnels"
+version: "0.2.0"
+slug: "openai_mcp_tunnel"
+description: "Run multiple OpenAI Secure MCP Tunnel connections from one private Home Assistant App."
+url: "https://github.com/niki11euro/home-assistant-icloud-mcp"
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: manual_only
+stage: experimental
+options:
+  tunnels: []
+schema:
+  tunnels:
+    - name: str
+      control_plane_tunnel_id: str
+      control_plane_api_key: password
+      mcp_server_url: url
+      mcp_auth_token: password

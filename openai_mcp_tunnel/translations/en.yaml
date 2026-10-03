@@ -1,0 +1,20 @@
+configuration:
+  tunnels:
+    name: Tunnel connections
+    description: One entry per OpenAI Secure MCP Tunnel and internal MCP target.
+    fields:
+      name:
+        name: Name
+        description: Local label used in App logs.
+      control_plane_tunnel_id:
+        name: Tunnel ID
+        description: OpenAI Secure MCP Tunnel ID.
+      control_plane_api_key:
+        name: Runtime API key
+        description: OpenAI runtime credential for this tunnel process.
+      mcp_server_url:
+        name: Internal MCP URL
+        description: Internal Home Assistant Streamable HTTP endpoint ending in /mcp.
+      mcp_auth_token:
+        name: MCP bearer token
+        description: Same local token configured in the target MCP App.

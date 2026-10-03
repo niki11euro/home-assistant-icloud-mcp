@@ -1,0 +1,34 @@
+configuration:
+  apple_id:
+    name: Apple Account E-Mail
+    description: E-Mail-Adresse fuer die iCloud CalDAV/CardDAV Anmeldung.
+  app_specific_password:
+    name: App-spezifisches Passwort
+    description: App-spezifisches Apple Passwort. Niemals das normale Apple Account Passwort verwenden.
+  timezone:
+    name: Zeitzone
+    description: IANA Zeitzone fuer Kalenderwerte ohne expliziten Offset.
+  read_only:
+    name: Nur lesen
+    description: Entfernt Schreibfunktionen fuer Kalender, Kontakte und Mail.
+  enable_contacts:
+    name: Kontakte aktivieren
+    description: Aktiviert CardDAV Kontaktfunktionen.
+  enable_mail:
+    name: Mail aktivieren
+    description: Aktiviert lesenden Zugriff auf iCloud Mail.
+  mail_address:
+    name: Mailadresse
+    description: Optional. Leer lassen, um die Apple Account E-Mail zu verwenden.
+  enable_mail_write:
+    name: Mail-Aenderungen aktivieren
+    description: Aktiviert Flags, Verschieben und Papierkorb. Mail muss aktiv und Nur lesen aus sein.
+  enable_mail_send:
+    name: Mailversand aktivieren
+    description: Aktiviert SMTP Versand. Eine Empfaengerfreigabe ist erforderlich.
+  smtp_allowed_recipients:
+    name: Erlaubte Mail-Empfaenger
+    description: Exakte, komma-getrennte Adressen, an die send_message senden darf.
+  mcp_auth_token:
+    name: Lokaler MCP Bearer Token
+    description: Zufallstoken nur zwischen Tunnel und internem MCP Endpunkt.

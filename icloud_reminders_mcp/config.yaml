@@ -1,0 +1,29 @@
+name: "Private iCloud Reminders MCP"
+version: "0.1.0"
+slug: "icloud_reminders_mcp"
+description: "Private Apple Reminders MCP over iCloud CalDAV VTODO."
+url: "https://github.com/niki11euro/home-assistant-icloud-mcp"
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: manual_only
+stage: experimental
+ports:
+  8080/tcp: null
+ports_description:
+  8080/tcp: "Internal authenticated Streamable HTTP MCP endpoint. Host mapping intentionally disabled."
+options:
+  apple_id: null
+  app_specific_password: null
+  allow_delete: false
+  list_allowlist: ""
+  request_timeout: 30
+  mcp_auth_token: null
+schema:
+  apple_id: email
+  app_specific_password: password
+  allow_delete: bool
+  list_allowlist: str
+  request_timeout: "int(5,120)"
+  mcp_auth_token: password

@@ -1,0 +1,39 @@
+name: "Private iCloud MCP"
+version: "0.1.0"
+slug: "icloud_mcp"
+description: "Private iCloud Calendar, Contacts and optional Mail MCP for ChatGPT."
+url: "https://github.com/niki11euro/home-assistant-icloud-mcp"
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: manual_only
+stage: experimental
+ports:
+  8080/tcp: null
+ports_description:
+  8080/tcp: "Internal authenticated Streamable HTTP MCP endpoint. Host mapping intentionally disabled."
+options:
+  apple_id: null
+  app_specific_password: null
+  timezone: "Europe/Berlin"
+  read_only: true
+  enable_contacts: true
+  enable_mail: false
+  mail_address: ""
+  enable_mail_write: false
+  enable_mail_send: false
+  smtp_allowed_recipients: ""
+  mcp_auth_token: null
+schema:
+  apple_id: email
+  app_specific_password: password
+  timezone: str
+  read_only: bool
+  enable_contacts: bool
+  enable_mail: bool
+  mail_address: str
+  enable_mail_write: bool
+  enable_mail_send: bool
+  smtp_allowed_recipients: str
+  mcp_auth_token: password

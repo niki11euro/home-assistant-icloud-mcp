@@ -1,0 +1,38 @@
+name: Validate Home Assistant Apps
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+      - name: Parse YAML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          for path in [Path('repository.yaml'), *Path('.').glob('*/config.yaml'), *Path('.').glob('*/translations/*.yaml')]:
+              with path.open('r', encoding='utf-8') as handle:
+                  yaml.safe_load(handle)
+              print('OK', path)
+          PY
+      - name: Check shell syntax
+        run: |
+          for f in */run.sh; do
+            sh -n "$f"
+            echo "OK $f"
+          done
+      - name: Build Core iCloud App image
+        run: docker build --pull -t ha-icloud-core-test ./icloud_mcp
+      - name: Build Reminders App image
+        run: docker build --pull -t ha-icloud-reminders-test ./icloud_reminders_mcp
+      - name: Build Tunnel App image
+        run: docker build --pull -t ha-icloud-tunnel-test ./openai_mcp_tunnel
