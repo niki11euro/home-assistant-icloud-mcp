@@ -2,7 +2,7 @@
 set -eu
 
 CONFIG_PATH="/data/options.json"
-SECRETS_DIR="/data/icloud-mcp-secrets"
+SECRETS_DIR="/tmp/icloud-mcp-secrets"
 
 fail() {
   echo "[icloud-mcp] Configuration error: $1" >&2
@@ -47,6 +47,7 @@ if [ "$ENABLE_MAIL" = "true" ] && [ -z "$MAIL_ADDRESS" ]; then
 fi
 
 umask 077
+rm -rf "$SECRETS_DIR"
 mkdir -p "$SECRETS_DIR"
 printf '%s' "$APPLE_ID" > "$SECRETS_DIR/apple-id"
 printf '%s' "$APP_PASSWORD" > "$SECRETS_DIR/app-password"
@@ -78,4 +79,12 @@ unset APP_PASSWORD MCP_AUTH_TOKEN
 echo "[icloud-mcp] Starting. read_only=$READ_ONLY contacts=$ENABLE_CONTACTS mail=$ENABLE_MAIL mail_write=$ENABLE_MAIL_WRITE mail_send=$ENABLE_MAIL_SEND timezone=$TIMEZONE"
 echo "[icloud-mcp] Internal MCP endpoint: http://<app-host>:8080/mcp (bearer token required)"
 
-exec supergateway --stdio "/usr/local/bin/icloud-mcp -health 127.0.0.1:9090" --outputTransport streamableHttp --stateful --sessionTimeout 300000 --host 0.0.0.0 --port 8080 --streamableHttpPath /mcp --logLevel info
+exec supergateway \
+  --stdio "/usr/local/bin/icloud-mcp" \
+  --outputTransport streamableHttp \
+  --stateful \
+  --sessionTimeout 300000 \
+  --host 0.0.0.0 \
+  --port 8080 \
+  --streamableHttpPath /mcp \
+  --logLevel info
