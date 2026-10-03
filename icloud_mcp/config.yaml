@@ -1,5 +1,5 @@
 name: "Private iCloud MCP"
-version: "0.1.0"
+version: "0.1.1"
 slug: "icloud_mcp"
 description: "Private iCloud Calendar, Contacts and optional Mail MCP for ChatGPT."
 url: "https://github.com/niki11euro/home-assistant-icloud-mcp"
