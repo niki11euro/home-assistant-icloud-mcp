@@ -29,6 +29,9 @@ trap terminate INT TERM
 COUNT="$(jq -er '.tunnels | length' "$CONFIG_PATH")" || fail "tunnels must be a list"
 [ "$COUNT" -gt 0 ] || fail "Configure at least one tunnel entry"
 
+DUPLICATE_TUNNEL_ID="$(jq -r '[.tunnels[].control_plane_tunnel_id] | group_by(.)[] | select(length > 1) | .[0]' "$CONFIG_PATH" | head -n 1)"
+[ -z "$DUPLICATE_TUNNEL_ID" ] || fail "Duplicate tunnel ID is not allowed: $DUPLICATE_TUNNEL_ID"
+
 INDEX=0
 while [ "$INDEX" -lt "$COUNT" ]; do
   NAME="$(jq -er ".tunnels[$INDEX].name" "$CONFIG_PATH")" || fail "tunnels[$INDEX].name is required"
@@ -39,6 +42,7 @@ while [ "$INDEX" -lt "$COUNT" ]; do
 
   [ -n "$NAME" ] || fail "tunnels[$INDEX].name is empty"
   [ -n "$TUNNEL_ID" ] || fail "tunnels[$INDEX].control_plane_tunnel_id is empty"
+  printf '%s\n' "$TUNNEL_ID" | grep -Eq '^tunnel_[0-9a-f]{32}$' || fail "tunnels[$INDEX].control_plane_tunnel_id has an invalid format"
   [ -n "$API_KEY" ] || fail "tunnels[$INDEX].control_plane_api_key is empty"
   [ "${#AUTH_TOKEN}" -ge 24 ] || fail "tunnels[$INDEX].mcp_auth_token must contain at least 24 characters"
   case "$SERVER_URL" in http://*|https://*) ;; *) fail "tunnels[$INDEX].mcp_server_url must start with http:// or https://" ;; esac
