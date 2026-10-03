@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+- Migrate the wrapped Reminder MCP server to the official MCP Python SDK 2.3.0.
+- Replace the v1 FastMCP server class with the v2 MCPServer API.
+- Adds support for the 2026-07-28 MCP discovery flow used by current OpenAI tunnel-client.
+- Keeps the Home Assistant read-only CalDAV compatibility probe and all Reminder tool behavior unchanged.
+
 ## 0.1.1
 
 - Skip the upstream duplicate CalDAV startup discovery after the Home Assistant wrapper compatibility probe.
