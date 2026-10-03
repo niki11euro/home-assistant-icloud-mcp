@@ -8,6 +8,12 @@ Apple moved modern Reminders to a newer CloudKit-backed store. Only VTODO-capabl
 
 At every App start, a read-only compatibility probe lists task-capable CalDAV collections. It does not create or modify any reminder. If zero compatible lists are found, the App exits with a clear log message instead of exposing a non-functional MCP.
 
+## MCP bridge
+
+The upstream Reminder MCP is a stdio server based on the Python MCP 1.x SDK. The App uses pinned `mcp-proxy` 0.12.0 to keep one compatible stdio session open and expose it as Streamable HTTP at `/mcp`.
+
+A small ASGI middleware in this wrapper requires the configured local bearer token for every HTTP request. This preserves the same security boundary used by the OpenAI Secure MCP Tunnels App without exposing the Apple credential to the tunnel.
+
 ## Credentials
 
 Use an Apple app-specific password, preferably a separate one from the Core iCloud App so it can be revoked independently.
