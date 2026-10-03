@@ -1,5 +1,5 @@
 name: "Private iCloud Reminders MCP"
-version: "0.1.0"
+version: "0.1.1"
 slug: "icloud_reminders_mcp"
 description: "Private Apple Reminders MCP over iCloud CalDAV VTODO."
 url: "https://github.com/niki11euro/home-assistant-icloud-mcp"
