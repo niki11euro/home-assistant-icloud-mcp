@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Skip the upstream duplicate CalDAV startup discovery after the Home Assistant wrapper compatibility probe.
+- This allows the MCP stdio server to answer initialize immediately enough for OpenAI tunnel-client's fixed startup probe deadline.
+- Reminder tools and the read-only compatibility probe are unchanged.
+
 ## 0.1.0
 
 - Initial Home Assistant App wrapper.
