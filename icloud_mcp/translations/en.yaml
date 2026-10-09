@@ -8,12 +8,18 @@ configuration:
   timezone:
     name: Time zone
     description: IANA time zone used for calendar values without an explicit offset.
-  read_only:
-    name: Read only
-    description: Removes write/mutation tools from Calendar, Contacts and Mail.
-  enable_contacts:
-    name: Enable Contacts
-    description: Enable CardDAV contact tools.
+  calendar_read:
+    name: Read calendars
+    description: Allow listing and searching calendars and events.
+  calendar_write:
+    name: Write calendars
+    description: Allow creating, updating and deleting calendar events.
+  contacts_read:
+    name: Read contacts
+    description: Allow listing and searching address books and contacts.
+  contacts_write:
+    name: Write contacts
+    description: Allow creating, updating and deleting contacts.
   enable_mail:
     name: Enable Mail
     description: Enable iCloud Mail read tools.
@@ -22,7 +28,7 @@ configuration:
     description: Optional mailbox address. Leave empty to use the Apple Account email.
   enable_mail_write:
     name: Enable Mail mutations
-    description: Enable mail flags, move and trash tools. Requires Mail and read-only disabled.
+    description: Enable mail flags, move and trash tools. Requires Mail enabled.
   enable_mail_send:
     name: Enable Mail send
     description: Enable SMTP send. Requires an allowed-recipient policy.

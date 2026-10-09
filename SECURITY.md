@@ -20,7 +20,7 @@ An administrator with access to the multi-tunnel App options can read or replace
 
 ## Least privilege
 
-Begin with iCloud `read_only: true`; enable writes only when needed and tested. Contacts and Mail are optional. Do not enable mail mutation/send without intentional authorization.
+Begin with `calendar_write: false` and `contacts_write: false`; enable each read/write permission only when needed and tested. Contacts and Mail are optional. The iCloud tool registry enforces the four Calendar/Contacts switches separately. Do not enable mail mutation/send without intentional authorization.
 
 Do not publish MCP host ports or add router forwards. A separately installed target MCP, such as Lexware, must also keep its host-port mapping disabled.
 

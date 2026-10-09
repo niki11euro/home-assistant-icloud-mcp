@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3
+
+- Add four independent Home Assistant options for Calendar read/write and Contacts read/write.
+- Enforce permissions within the upstream MCP tool registry (tools/list and direct calls), including write-only modes.
+- Keep Mail read/change/send authorization separate; preserve existing iCloud credentials and tunnel identities.
+- Add a 16-combination test suite for domain capabilities and tool visibility.
+
+
 ## 0.1.2
 
 - Preserve explicit `false` in `read_only` and `enable_contacts` settings instead of replacing it with the default `true`.

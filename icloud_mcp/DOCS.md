@@ -1,55 +1,42 @@
 # Private iCloud MCP
 
-## Purpose
+## Overview
 
-Provides iCloud Calendar, Contacts, and optional iCloud Mail as an internal MCP endpoint for use with the OpenAI Secure MCP Tunnel App.
+Apple Calendar (CalDAV), Contacts (CardDAV) and optional iCloud Mail (IMAP/SMTP) are exposed as a private MCP server to the shared OpenAI Secure MCP Tunnels Home Assistant App.
 
-Upstream iCloud MCP is pinned to the commit behind release v0.4.1:
+The pinned upstream is `ThomasCrouzet/icloud-mcp` commit `84cb170b1dd62ee01a5018290b80375ea47c1f19`. It is bridged through `supergateway` v4.1.0. The Home Assistant wrapper applies a reviewed patch to the *server-side MCP tool registry*, not just to the HA configuration screen.
 
-`84cb170b1dd62ee01a5018290b80375ea47c1f19`
+## Independent Calendar / Contacts permissions
 
-The stdio server is bridged to Streamable HTTP with `supergateway` 4.1.0.
+The Home Assistant **Private iCloud MCP → Configuration** page has four independent switches:
 
-## Credentials
+| Option | Initial default | Grants these MCP tools |
+|---|---:|---|
+| `calendar_read` | true | `list_calendars`, `search_events`, `get_event`, `find_free_slots`, `validate_event` |
+| `calendar_write` | false | `create_event`, `update_event`, `delete_event` |
+| `contacts_read` | false | `list_address_books`, `search_contacts`, `get_contact` |
+| `contacts_write` | false | `create_contact`, `update_contact`, `delete_contact` |
 
-Use:
+`calendar_capabilities` and `icloud_capabilities` report only local feature metadata and remain available regardless of switches. If both permissions for a domain are off, no domain data tools are registered.
 
-- your Apple Account / iCloud email address
-- an Apple app-specific password
-- a separate random local MCP bearer token
+Each switch is independent: write-only configurations are supported when an exact resource identifier is already known. In normal use enable read alongside write to discover calendar and address-book identifiers.
 
-Never use the main Apple Account password.
+**Mail remains separately configured** using `enable_mail`, `enable_mail_write`, `enable_mail_send` and `smtp_allowed_recipients`. The previous shared `read_only` and `enable_contacts` options are obsolete and no longer displayed. The startup wrapper provides a compatibility fallback for older `options.json` files that lack the new switches.
 
-## Safe first configuration
+Save permission changes and **restart this MCP App**. The startup process validates the booleans, exports domain-specific policy flags, and constructs an immutable tool registration plan. Denied tools are absent from MCP `tools/list` and cannot be called directly by name. Refresh the ChatGPT connector if its displayed tool catalog is cached.
 
-Recommended first start:
+## Credentials and networking
 
-- `read_only: true`
-- `enable_contacts: true` only if contacts are needed
-- `enable_mail: false`
-- `enable_mail_write: false`
-- `enable_mail_send: false`
+Use an Apple app-specific password, never the Apple Account password. The token between the tunnel App and this MCP endpoint must be independent of all business-service tokens.
 
-After read access works, disable `read_only` only if Calendar/Contacts writes are desired.
+The App only publishes an authenticated private Streamable HTTP `/mcp` endpoint on the Home Assistant app network. No host or router port forwarding is required.
 
-## Mail
+## Deployment/upgrade note
 
-Mail is entirely optional. When enabled and `mail_address` is empty, the App uses `apple_id` as the mailbox address.
+When updating from 0.1.2, **copy existing settings before deployment**:
 
-Mail mutations require both:
+- old `read_only: false` implies `calendar_write: true`
+- old `enable_contacts: false` implies `contacts_read: false` and `contacts_write: false`
+- `calendar_read` was previously always enabled
 
-- `enable_mail: true`
-- `enable_mail_write: true`
-- `read_only: false`
-
-Mail sending additionally requires `enable_mail_send: true` and an exact comma-separated `smtp_allowed_recipients` policy. Avoid `*`.
-
-## Internal endpoint
-
-The App listens internally on:
-
-`http://<app-host>:8080/mcp`
-
-The host port is intentionally not published. Requests must include the configured bearer token.
-
-Use that internal URL and the same bearer token in the OpenAI Secure MCP Tunnels App.
+The new `calendar_write` default is false for clean installations. Existing deployments should have their four explicit switches set from the actual old state and verified after restart. Do not assume a config migration is complete until the MCP `icloud_capabilities` result matches the desired rights.
