@@ -3,7 +3,6 @@
 This repository contains wrappers and build instructions for independent upstream projects.
 
 - ThomasCrouzet/icloud-mcp — MIT License
-- Lingnik/icloud-reminders-mcp — MIT License
 - supercorp-ai/supergateway — MIT License
 - openai/tunnel-client — Apache License 2.0
 

@@ -20,8 +20,8 @@ MCP_AUTH_TOKEN="$(jq -er '.mcp_auth_token' "$CONFIG_PATH")" || fail "mcp_auth_to
 [ "${#MCP_AUTH_TOKEN}" -ge 24 ] || fail "mcp_auth_token must contain at least 24 characters"
 
 TIMEZONE="$(jq -r '.timezone // "Europe/Berlin"' "$CONFIG_PATH")"
-READ_ONLY="$(jq -r '.read_only // true' "$CONFIG_PATH")"
-ENABLE_CONTACTS="$(jq -r '.enable_contacts // true' "$CONFIG_PATH")"
+READ_ONLY="$(jq -r 'if .read_only == null then true else .read_only end' "$CONFIG_PATH")"
+ENABLE_CONTACTS="$(jq -r 'if .enable_contacts == null then true else .enable_contacts end' "$CONFIG_PATH")"
 ENABLE_MAIL="$(jq -r '.enable_mail // false' "$CONFIG_PATH")"
 MAIL_ADDRESS="$(jq -r '.mail_address // ""' "$CONFIG_PATH")"
 ENABLE_MAIL_WRITE="$(jq -r '.enable_mail_write // false' "$CONFIG_PATH")"
