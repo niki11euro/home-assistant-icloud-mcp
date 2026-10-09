@@ -1,5 +1,5 @@
 name: "Private iCloud MCP"
-version: "0.1.2"
+version: "0.1.3"
 slug: "icloud_mcp"
 description: "Private iCloud Calendar, Contacts and optional Mail MCP for ChatGPT."
 url: "https://github.com/niki11euro/home-assistant-icloud-mcp"
@@ -17,8 +17,10 @@ options:
   apple_id: null
   app_specific_password: null
   timezone: "Europe/Berlin"
-  read_only: true
-  enable_contacts: true
+  calendar_read: true
+  calendar_write: false
+  contacts_read: false
+  contacts_write: false
   enable_mail: false
   mail_address: ""
   enable_mail_write: false
@@ -29,8 +31,10 @@ schema:
   apple_id: email
   app_specific_password: password
   timezone: str
-  read_only: bool
-  enable_contacts: bool
+  calendar_read: bool
+  calendar_write: bool
+  contacts_read: bool
+  contacts_write: bool
   enable_mail: bool
   mail_address: str
   enable_mail_write: bool

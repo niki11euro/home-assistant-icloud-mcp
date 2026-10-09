@@ -13,7 +13,7 @@ Wraps `ThomasCrouzet/icloud-mcp`, pinned to the reviewed v0.4.1 release commit.
 - Optional iCloud Mail through IMAP/SMTP
 - Authenticated internal Streamable HTTP endpoint at `/mcp`
 - Apple app-specific password; do not use the main Apple Account password
-- Read-only mode enabled by default; opt-in to write functions in App settings
+- Independent Calendar read/write and Contacts read/write switches, with write disabled by default
 
 ### OpenAI Secure MCP Tunnels
 

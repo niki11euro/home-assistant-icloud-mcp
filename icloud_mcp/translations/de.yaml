@@ -8,12 +8,18 @@ configuration:
   timezone:
     name: Zeitzone
     description: IANA Zeitzone fuer Kalenderwerte ohne expliziten Offset.
-  read_only:
-    name: Nur lesen
-    description: Entfernt Schreibfunktionen fuer Kalender, Kontakte und Mail.
-  enable_contacts:
-    name: Kontakte aktivieren
-    description: Aktiviert CardDAV Kontaktfunktionen.
+  calendar_read:
+    name: Kalender lesen
+    description: Erlaubt das Anzeigen und Suchen von Kalendern und Terminen.
+  calendar_write:
+    name: Kalender schreiben
+    description: Erlaubt das Erstellen, Bearbeiten und Loeschen von Terminen.
+  contacts_read:
+    name: Kontakte lesen
+    description: Erlaubt das Anzeigen und Suchen von Kontakten.
+  contacts_write:
+    name: Kontakte schreiben
+    description: Erlaubt das Erstellen, Bearbeiten und Loeschen von Kontakten.
   enable_mail:
     name: Mail aktivieren
     description: Aktiviert lesenden Zugriff auf iCloud Mail.
@@ -22,7 +28,7 @@ configuration:
     description: Optional. Leer lassen, um die Apple Account E-Mail zu verwenden.
   enable_mail_write:
     name: Mail-Aenderungen aktivieren
-    description: Aktiviert Flags, Verschieben und Papierkorb. Mail muss aktiv und Nur lesen aus sein.
+    description: Aktiviert Flags, Verschieben und Papierkorb. Mail muss aktiviert sein.
   enable_mail_send:
     name: Mailversand aktivieren
     description: Aktiviert SMTP Versand. Eine Empfaengerfreigabe ist erforderlich.

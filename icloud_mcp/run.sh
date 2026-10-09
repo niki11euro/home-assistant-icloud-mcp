@@ -20,15 +20,23 @@ MCP_AUTH_TOKEN="$(jq -er '.mcp_auth_token' "$CONFIG_PATH")" || fail "mcp_auth_to
 [ "${#MCP_AUTH_TOKEN}" -ge 24 ] || fail "mcp_auth_token must contain at least 24 characters"
 
 TIMEZONE="$(jq -r '.timezone // "Europe/Berlin"' "$CONFIG_PATH")"
-READ_ONLY="$(jq -r 'if .read_only == null then true else .read_only end' "$CONFIG_PATH")"
-ENABLE_CONTACTS="$(jq -r 'if .enable_contacts == null then true else .enable_contacts end' "$CONFIG_PATH")"
+CALENDAR_READ="$(jq -r 'if has("calendar_read") then .calendar_read else true end' "$CONFIG_PATH")"
+CALENDAR_WRITE="$(jq -r 'if has("calendar_write") then .calendar_write elif has("read_only") then (.read_only | not) else false end' "$CONFIG_PATH")"
+CONTACTS_READ="$(jq -r 'if has("contacts_read") then .contacts_read elif has("enable_contacts") then .enable_contacts else false end' "$CONFIG_PATH")"
+CONTACTS_WRITE="$(jq -r 'if has("contacts_write") then .contacts_write elif has("enable_contacts") and has("read_only") then (.enable_contacts and (.read_only | not)) else false end' "$CONFIG_PATH")"
+if [ "$CONTACTS_READ" = "true" ] || [ "$CONTACTS_WRITE" = "true" ]; then
+  ENABLE_CONTACTS=true
+else
+  ENABLE_CONTACTS=false
+fi
+READ_ONLY=false
 ENABLE_MAIL="$(jq -r '.enable_mail // false' "$CONFIG_PATH")"
 MAIL_ADDRESS="$(jq -r '.mail_address // ""' "$CONFIG_PATH")"
 ENABLE_MAIL_WRITE="$(jq -r '.enable_mail_write // false' "$CONFIG_PATH")"
 ENABLE_MAIL_SEND="$(jq -r '.enable_mail_send // false' "$CONFIG_PATH")"
 SMTP_ALLOWED="$(jq -r '.smtp_allowed_recipients // ""' "$CONFIG_PATH")"
 
-for pair in "read_only:$READ_ONLY" "enable_contacts:$ENABLE_CONTACTS" "enable_mail:$ENABLE_MAIL" "enable_mail_write:$ENABLE_MAIL_WRITE" "enable_mail_send:$ENABLE_MAIL_SEND"; do
+for pair in "calendar_read:$CALENDAR_READ" "calendar_write:$CALENDAR_WRITE" "contacts_read:$CONTACTS_READ" "contacts_write:$CONTACTS_WRITE" "enable_contacts:$ENABLE_CONTACTS" "enable_mail:$ENABLE_MAIL" "enable_mail_write:$ENABLE_MAIL_WRITE" "enable_mail_send:$ENABLE_MAIL_SEND"; do
   key="${pair%%:*}"
   val="${pair#*:}"
   case "$val" in true|false) ;; *) fail "$key must be true or false" ;; esac
@@ -58,6 +66,10 @@ export ICLOUD_PASSWORD="file://$SECRETS_DIR/app-password"
 export ICLOUD_MCP_DEFAULT_TZ="$TIMEZONE"
 export ICLOUD_MCP_READ_ONLY="$READ_ONLY"
 export ICLOUD_MCP_ENABLE_CONTACTS="$ENABLE_CONTACTS"
+export ICLOUD_MCP_CALENDAR_READ="$CALENDAR_READ"
+export ICLOUD_MCP_CALENDAR_WRITE="$CALENDAR_WRITE"
+export ICLOUD_MCP_CONTACTS_READ="$CONTACTS_READ"
+export ICLOUD_MCP_CONTACTS_WRITE="$CONTACTS_WRITE"
 export ICLOUD_MCP_ENABLE_MAIL="$ENABLE_MAIL"
 export ICLOUD_MCP_ENABLE_MAIL_WRITE="$ENABLE_MAIL_WRITE"
 export ICLOUD_MCP_ENABLE_MAIL_SEND="$ENABLE_MAIL_SEND"
@@ -76,7 +88,7 @@ fi
 export SUPERGATEWAY_API_KEY="$MCP_AUTH_TOKEN"
 unset APP_PASSWORD MCP_AUTH_TOKEN
 
-echo "[icloud-mcp] Starting. read_only=$READ_ONLY contacts=$ENABLE_CONTACTS mail=$ENABLE_MAIL mail_write=$ENABLE_MAIL_WRITE mail_send=$ENABLE_MAIL_SEND timezone=$TIMEZONE"
+echo "[icloud-mcp] Starting. calendar_read=$CALENDAR_READ calendar_write=$CALENDAR_WRITE contacts_read=$CONTACTS_READ contacts_write=$CONTACTS_WRITE mail=$ENABLE_MAIL mail_write=$ENABLE_MAIL_WRITE mail_send=$ENABLE_MAIL_SEND timezone=$TIMEZONE"
 echo "[icloud-mcp] Internal MCP endpoint: http://<app-host>:8080/mcp (bearer token required)"
 
 exec supergateway \

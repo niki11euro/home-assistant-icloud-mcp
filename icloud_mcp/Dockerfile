@@ -5,11 +5,15 @@ ARG ICLOUD_MCP_COMMIT=84cb170b1dd62ee01a5018290b80375ea47c1f19
 RUN apk add --no-cache git ca-certificates python3
 WORKDIR /src
 COPY patch_contacts.py /tmp/patch_contacts.py
+COPY patch_domain_permissions.py /tmp/patch_domain_permissions.py
+COPY domain_permissions_test.go /tmp/domain_permissions_test.go
 RUN git clone https://github.com/ThomasCrouzet/icloud-mcp.git . \
     && git checkout "$ICLOUD_MCP_COMMIT" \
     && python3 /tmp/patch_contacts.py /src \
-    && gofmt -w internal/contacts/operations.go internal/contacts/service.go internal/contacts/contacts_test.go \
-    && go test ./internal/contacts \
+    && python3 /tmp/patch_domain_permissions.py /src \
+    && cp /tmp/domain_permissions_test.go /src/internal/mcptools/domain_permissions_test.go \
+    && gofmt -w internal/contacts/operations.go internal/contacts/service.go internal/contacts/contacts_test.go internal/mcptools/register.go internal/mcptools/contacts_register.go internal/mcptools/calendar_capabilities.go internal/mcptools/icloud_capabilities.go internal/mcptools/domain_permissions_test.go cmd/icloud-mcp/main.go cmd/icloud-mcp/app_permissions.go \
+    && go test ./internal/contacts ./internal/mcptools ./cmd/icloud-mcp \
     && CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/icloud-mcp ./cmd/icloud-mcp
 
 FROM node:24.14.1-alpine
