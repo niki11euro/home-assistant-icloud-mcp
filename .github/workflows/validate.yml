@@ -32,7 +32,5 @@ jobs:
           done
       - name: Build Core iCloud App image
         run: docker build --pull -t ha-icloud-core-test ./icloud_mcp
-      - name: Build Reminders App image
-        run: docker build --pull -t ha-icloud-reminders-test ./icloud_reminders_mcp
       - name: Build Tunnel App image
         run: docker build --pull -t ha-icloud-tunnel-test ./openai_mcp_tunnel

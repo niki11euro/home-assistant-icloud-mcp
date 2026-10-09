@@ -1,20 +1,19 @@
 # Pre-install checklist
 
-Before installation:
+1. Confirm the personal Home Assistant instance.
+2. Create an Apple app-specific password for iCloud Core and a random local bearer token of at least 24 characters.
+3. Keep iCloud Mail disabled unless needed, and begin in read-only mode.
+4. Obtain separate OpenAI Tunnel IDs and runtime keys for every target MCP.
+5. Configure each entry in OpenAI Secure MCP Tunnels with its own URL and corresponding target MCP token.
+6. If connecting Lexware Office, install and configure its separate MCP App first. Do not put Lexware API credentials into the shared tunnel.
+7. Do not expose any MCP target port to the host or the internet.
+8. Confirm Home Assistant Apps are stopped immediately after installation; optional **Start on boot** is off by default.
+9. Protect Home Assistant backups because App options contain secrets.
 
-1. Confirm this is the private Home Assistant environment.
-2. Generate one Apple app-specific password for iCloud Core.
-3. If using Reminders, preferably generate a second app-specific password for Reminders.
-4. Generate a random local MCP bearer token for each MCP App. Use at least 24 random characters.
-5. Create the required OpenAI Secure MCP Tunnel IDs/runtime credentials.
-6. Decide which iCloud capabilities are needed. Keep Mail disabled if it is not required.
-7. Keep the main Apple Account password out of Home Assistant.
-8. Verify that Home Assistant backups are protected because App options can be included in backups.
-
-Suggested local token generation from a trusted shell:
+Suggested token generation on a trusted device:
 
 ```sh
 openssl rand -hex 32
 ```
 
-Do not commit generated values to Git.
+Never commit generated secrets into Git.

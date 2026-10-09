@@ -1,86 +1,62 @@
-# Home Assistant Private iCloud MCP
+# Home Assistant MCP Apps and Shared Secure Tunnels
 
-Private Home Assistant App repository for exposing selected iCloud services to ChatGPT through OpenAI Secure MCP Tunnel.
-
-This repository intentionally separates private iCloud access from business/WE.R infrastructure.
+Home Assistant App repository for a private iCloud MCP server and an OpenAI Secure MCP Tunnels App. The tunnel infrastructure also accepts other independent MCP targets, such as the **Lexware Office MCP** hosted in `niki11euro/home-assistant-lexware-mcp`.
 
 ## Apps
 
 ### Private iCloud MCP
 
-Wraps `ThomasCrouzet/icloud-mcp` pinned to the v0.4.1 release commit.
+Wraps `ThomasCrouzet/icloud-mcp`, pinned to the reviewed v0.4.1 release commit.
 
-Supported domains:
-
-- Calendar over CalDAV
-- Contacts over CardDAV
-- Optional iCloud Mail over IMAP/SMTP
-
-The upstream server uses an Apple app-specific password. Never enter the main Apple Account password.
-
-The upstream MCP server is stdio-only. This App places the pinned `supergateway` bridge in front of it and exposes a private Streamable HTTP endpoint at `/mcp`. The endpoint requires a local bearer token and has no host port mapping by default.
-
-### Private iCloud Reminders MCP
-
-Wraps `Lingnik/icloud-reminders-mcp` pinned to a reviewed commit. It accesses legacy/VTODO-capable iCloud Reminders lists over CalDAV and exposes them through an authenticated Streamable HTTP endpoint.
-
-Important: modern Apple Reminders lists may have been migrated to CloudKit and may not be reachable over CalDAV. The App performs a read-only compatibility probe at startup and refuses to run if no VTODO-capable list is available.
+- Calendar access through CalDAV
+- Optional Contacts via CardDAV
+- Optional iCloud Mail through IMAP/SMTP
+- Authenticated internal Streamable HTTP endpoint at `/mcp`
+- Apple app-specific password; do not use the main Apple Account password
+- Read-only mode enabled by default; opt-in to write functions in App settings
 
 ### OpenAI Secure MCP Tunnels
 
-Wraps `openai/tunnel-client` v0.0.15. One installed App can run multiple tunnel-client processes. Add one list entry per MCP endpoint/tunnel ID.
+Wraps `openai/tunnel-client` v0.0.15. One App manages multiple tunnel entries, each with its own OpenAI tunnel ID, runtime API key and matching target MCP token.
 
-This allows, for example:
+Typical entries:
+1. `iCloud Core` -> Private iCloud MCP (personal)
+2. `Lexware Office` -> Lexware Office MCP from the separate repository (WE.R)
 
-- tunnel A -> Private iCloud MCP
-- tunnel B -> Private iCloud Reminders MCP
-
-Each target keeps its own tunnel ID and local bearer token.
+**Private and business data remain logically separate**: separate endpoints, tunnel identities, tokens and plugins. The shared tunnel App is an infrastructure component, not a shared data store. Its administrator can nevertheless access the credentials for every entry.
 
 ## Installation
 
-Add this repository to the Home Assistant App store:
+Register this repository in the Home Assistant App store:
 
 `https://github.com/niki11euro/home-assistant-icloud-mcp`
 
-Then install the Apps you need.
+1. Install and configure Private iCloud MCP.
+2. Start the MCP target, verify logs and capabilities.
+3. Install the OpenAI Secure MCP Tunnels App and configure an independent entry for every target MCP.
+4. Start the shared tunnel App, verify connectivity and test the ChatGPT plugins.
 
-Recommended order:
+Internal hostnames are assigned by Home Assistant Supervisor. Discover the exact hostname in installed App metadata; never guess it.
 
-1. Install and configure **Private iCloud MCP**.
-2. Start it and verify the logs.
-3. Optionally install **Private iCloud Reminders MCP** and verify the compatibility probe.
-4. Install **OpenAI Secure MCP Tunnels**.
-5. Add one tunnel entry for each MCP App you want to expose to ChatGPT.
+## Startup behavior
 
-The internal Home Assistant hostname is assigned by Supervisor from the repository and App slug. Do not guess it. After installation, inspect the installed App metadata/logs and use the exact internal URL in the tunnel configuration, for example:
-
-`http://<repository-id>-icloud-mcp:8080/mcp`
-
-or
-
-`http://<repository-id>-icloud-reminders-mcp:8080/mcp`
+Both Apps use `boot: manual`: no automatic startup directly after installation. The **Start on boot** switch is available in Home Assistant and is initially off. Turning it on for a working deployment makes the App start after subsequent Home Assistant restarts; it does not automatically change any MCP permissions.
 
 ## Security defaults
 
-- no host network
-- no Home Assistant API access
-- no Supervisor API access
-- no host port mapping
-- MCP endpoints require a separate bearer token
-- Apple app-specific passwords stay only inside the corresponding private App
-- the tunnel receives only the local MCP token, not the Apple credential
-- Mail is disabled by default
-- Reminders deletion is disabled by default
-- all Apps use `boot: manual_only`
+- no host network, Supervisor API or Home Assistant API access
+- no host port published by the iCloud MCP
+- private endpoints authenticated with bearer tokens
+- service-specific credentials kept only in the corresponding App options
+- shared tunnel settings contain per-target runtime secrets; restrict access to administrators
+- Mail and write capabilities disabled by default
 
-See [SECURITY.md](SECURITY.md), [PREINSTALL_CHECKLIST.md](PREINSTALL_CHECKLIST.md), and [REVERSIBILITY.md](REVERSIBILITY.md).
+See [SECURITY.md](SECURITY.md), [PREINSTALL_CHECKLIST.md](PREINSTALL_CHECKLIST.md) and [REVERSIBILITY.md](REVERSIBILITY.md).
 
 ## Upstream projects
 
 - https://github.com/ThomasCrouzet/icloud-mcp
-- https://github.com/Lingnik/icloud-reminders-mcp
 - https://github.com/supercorp-ai/supergateway
 - https://github.com/openai/tunnel-client
 
-Third-party licenses are preserved in the App directories.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

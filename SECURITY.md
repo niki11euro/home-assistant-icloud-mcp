@@ -2,35 +2,28 @@
 
 ## Credential model
 
-Use an Apple app-specific password only. Never enter the main Apple Account password into these Apps.
+Use an Apple **app-specific** password only, never the main Apple Account password. Store all Apple, OpenAI and target MCP credentials in Home Assistant App settings, not in Git.
 
-Home Assistant stores App options in each App's persistent data area. Password fields are masked in the UI, but backups may contain those values. Protect Home Assistant backups accordingly.
+Password fields are masked in the UI, but Home Assistant backups may contain their values. Protect backups and restrict Supervisor access.
 
 ## Network boundaries
 
-The iCloud Apps do not publish host ports by default. They expose port 8080 only on the internal App network and require a bearer token before MCP requests are accepted.
+The iCloud MCP exposes an authenticated internal port 8080 without a host port mapping. The shared tunnel establishes outbound HTTPS connections and must be configured with a distinct bearer token, runtime key, and target URL for each MCP endpoint.
 
-The OpenAI tunnel-client establishes outbound HTTPS connectivity. It receives the MCP target URL and local bearer token, but does not need the Apple app-specific password.
+The OpenAI tunnel never needs the Apple account password or the Lexware API key; only the target MCP bearer tokens.
+
+## Private versus business
+
+The multi-tunnel App may forward iCloud (personal) and Lexware (business) through **separate tunnels**. Never reuse tunnel identities, bearer tokens or control-plane credentials between these domains. The App shares infrastructure and administratively stores their tunnel credentials, but performs no cross-domain synchronization.
+
+An administrator with access to the multi-tunnel App options can read or replace all tunnel credentials. Keep this permission tightly controlled.
 
 ## Least privilege
 
-Recommended first deployment:
+Begin with iCloud `read_only: true`; enable writes only when needed and tested. Contacts and Mail are optional. Do not enable mail mutation/send without intentional authorization.
 
-- iCloud Core: `read_only: true`
-- Contacts: enabled only if needed
-- Mail: disabled
-- Reminders delete: disabled
-
-After testing, enable only the write capabilities you actually need.
-
-## Apple credential scope
-
-Apple app-specific passwords are not fine-grained per iCloud service. Treat each one as a high-value secret even when a given MCP server exposes only a subset of services. Separate app-specific passwords for Core and Reminders are recommended so either integration can be revoked independently.
-
-## Reminders limitation
-
-The Reminders App uses CalDAV VTODO. Accounts whose reminder lists were migrated to Apple's newer CloudKit-based Reminders storage may expose zero compatible lists. The startup compatibility probe is read-only and fails closed if none are available.
+Do not publish MCP host ports or add router forwards. A separately installed target MCP, such as Lexware, must also keep its host-port mapping disabled.
 
 ## Reporting
 
-Do not include credentials, bearer tokens, tunnel runtime keys, calendar data, contact details, mail content, or reminder content in issues or logs shared publicly.
+Never place passwords, runtime keys, bearer tokens or personal calendar/contact data in public issues or logs.

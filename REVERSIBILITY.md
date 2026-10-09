@@ -1,27 +1,26 @@
 # Reversibility
 
-All three Apps are designed to be removable without modifying Home Assistant Core configuration.
+This repository currently provides two independent Home Assistant Apps:
 
-## Disconnect ChatGPT first
+1. Private iCloud MCP
+2. OpenAI Secure MCP Tunnels
 
-Stop or remove the relevant tunnel configuration before removing an MCP App.
+Installation does not change Home Assistant Core configuration or router rules.
 
-## Stop Apps
+## Disconnecting an MCP target
 
-Recommended order:
+1. Remove its entry from the shared tunnel list.
+2. Restart the shared tunnel App and verify the remaining tunnels still work.
+3. Stop/uninstall the target MCP App only if no longer needed.
+4. Disconnect the retired ChatGPT plugin and revoke unused tunnel runtime credentials when possible.
 
-1. Stop OpenAI Secure MCP Tunnels.
-2. Stop Private iCloud Reminders MCP.
-3. Stop Private iCloud MCP.
+Do not remove the shared tunnel App if another entry (for example Lexware Office) still uses it.
 
-## Revoke credentials
+## Removing this entire repository installation
 
-At account.apple.com, revoke any app-specific passwords created for these Apps if you no longer need them.
+1. Stop the shared tunnel App and the iCloud MCP App.
+2. Uninstall both Apps in Home Assistant.
+3. Revoke now-unused Apple app-specific password and OpenAI tunnel runtime credentials.
+4. Optionally remove the App repository from Home Assistant.
 
-Revoke/delete OpenAI tunnel runtime credentials according to the tunnel management workflow if the tunnel is being retired.
-
-## Uninstall
-
-Uninstall the Apps from Home Assistant. Then remove this repository from the App store if desired.
-
-No router port forwarding, Home Assistant integration entry, or host-level service is created by this repository.
+No private calendar or contact data is deleted from Apple's cloud when the App is removed.

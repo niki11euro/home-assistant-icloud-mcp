@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Preserve explicit `false` in `read_only` and `enable_contacts` settings instead of replacing it with the default `true`.
+- Allow optional Home Assistant Start on boot while keeping manual start as the default.
+
+
 ## 0.1.1
 
 - Keep Contacts search usable when individual iCloud vCards are malformed or unsupported.

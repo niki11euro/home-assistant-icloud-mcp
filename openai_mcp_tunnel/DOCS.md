@@ -2,37 +2,35 @@
 
 ## Purpose
 
-Runs one `tunnel-client` process per configured list entry. This lets a single installed Home Assistant App expose multiple private MCP servers while keeping a distinct OpenAI tunnel ID and local bearer token for each target.
+One Home Assistant App runs multiple independent OpenAI Secure MCP Tunnel client processes. Each entry has its own Tunnel ID, runtime API key, target URL and MCP bearer token. These must never be exchanged between targets.
 
-Typical configuration:
+Supported examples:
 
-- `iCloud Core` -> internal Private iCloud MCP `/mcp`
-- `iCloud Reminders` -> internal Private iCloud Reminders MCP `/mcp`
+- `iCloud Core` -> Private iCloud MCP (personal calendar and contacts)
+- `Lexware Office` -> Lexware Office MCP (business accounting)
 
-## Configuration fields per tunnel
+These are independent MCP endpoints. Sharing the infrastructure App does not make private iCloud information available to Lexware or vice versa. However, an administrator who can edit this App's settings can access the credentials of all configured tunnels.
 
-- `name`: local label used in logs
-- `control_plane_tunnel_id`: OpenAI Secure MCP Tunnel ID
-- `control_plane_api_key`: runtime API key for that tunnel
-- `mcp_server_url`: internal Streamable HTTP MCP URL
-- `mcp_auth_token`: bearer token configured in the target MCP App
+## Configuration
 
-The tunnel does not need, receive, or store the Apple app-specific password.
+Configure an entry per target under `tunnels`:
 
-## Internal URLs
+- `name`: human-readable process label
+- `control_plane_tunnel_id`: existing dedicated OpenAI tunnel ID
+- `control_plane_api_key`: runtime key belonging to that tunnel
+- `mcp_server_url`: exact internal `http://<HA-app-host>:8080/mcp` endpoint
+- `mcp_auth_token`: bearer token configured in that MCP target App
 
-Use the exact Home Assistant internal hostname assigned to the installed MCP App. Do not guess it.
+Do not put any real secrets into GitHub or into example configuration files.
 
-Expected shape:
+For Lexware Office MCP, obtain its hostname from Home Assistant App metadata; it may belong to a different Home Assistant App repository. Do not infer an identifier from the source repository name.
 
-`http://<repository-id>-icloud-mcp:8080/mcp`
+## Startup
 
-or
+Installation never starts this App automatically: `boot: manual`. Users can later enable **Start on boot** in Home Assistant. Install and start the target MCP Apps first, then start this tunnel App.
 
-`http://<repository-id>-icloud-reminders-mcp:8080/mcp`
+For security, host networking and a remotely accessible management interface are disabled.
 
-## Process behavior
+## Process supervision
 
-Every configured tunnel runs as a separate child process with a separate loopback health port. If any child exits, the wrapper stops the others and exits so Home Assistant does not leave a partially-working tunnel set running unnoticed.
-
-No Web UI or remote admin/health listener is exposed.
+Each entry runs with its own local health port and process. If a tunnel process terminates, the supervisor stops the other tunnel processes and exits, so Home Assistant can surface the failure instead of leaving a partly functional set running.
